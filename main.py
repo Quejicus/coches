@@ -212,7 +212,7 @@ else:
 df_combined.to_csv(HISTORICO_FILE, index=True, index_label="id")
 
 gauth = GoogleAuth()
-gauth.LoadCredentialsFile("client_secrets.json")
+gauth.LoadCredentialsFile("mycreds.txt")
 
 if gauth.credentials is None:
     gauth.LocalWebserverAuth()
@@ -221,7 +221,7 @@ elif gauth.access_token_expired:
 else:
     gauth.Authorize()
 
-gauth.SaveCredentialsFile("client_secrets.json")
+gauth.SaveCredentialsFile("mycreds.txt")
 drive = GoogleDrive(gauth)
 
 file_drive = drive.CreateFile({"title": "alhambra_sharan_hist.csv"})
