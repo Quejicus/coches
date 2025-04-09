@@ -247,7 +247,7 @@ def download_csv_from_github():
 # Función para guardar el archivo CSV en GitHub
 def upload_csv_to_github(df, commit_message):
     # Convertir el DataFrame en CSV
-    csv_data = df.to_csv("alhambra_sharan_hist.csv", index=True, index_label="id")
+    csv_data = df.to_csv(index=True, index_label="id")
     encoded_csv = base64.b64encode(csv_data.encode("utf-8")).decode("utf-8")
 
     # Crear la URL de la API de GitHub para cargar el archivo CSV
