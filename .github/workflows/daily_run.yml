@@ -1,0 +1,30 @@
+name: Ejecutar script diario
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar el repo
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+
+      - name: Ejecutar script
+        env:
+          GDRIVE_CLIENT_SECRETS: ${{ secrets.GDRIVE_CLIENT_SECRETS }}
+        run: |
+          echo "$GDRIVE_CLIENT_SECRETS" > client_secrets.json
+          python main.py
