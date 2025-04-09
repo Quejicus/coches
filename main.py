@@ -224,8 +224,7 @@ else:
 gauth.SaveCredentialsFile("mycreds.txt")
 drive = GoogleDrive(gauth)
 
-# === 5. Subir archivo a Google Drive (sobrescribe historico.csv) ===
-file_drive = drive.CreateFile({"title": "historico.csv"})
+file_drive = drive.CreateFile({"title": "alhambra_sharan_hist.csv"})
 file_drive.SetContentFile(HISTORICO_FILE)
 file_drive.Upload()
 

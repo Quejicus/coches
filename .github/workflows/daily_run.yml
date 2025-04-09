@@ -1,30 +1,30 @@
-name: Ejecutar script diario
+name: Automatización de carga de datos a Google Drive
 
 on:
+  workflow_dispatch: # Permite ejecutar el workflow manualmente
   schedule:
-    - cron: '0 10 * * *'
-  workflow_dispatch:
+    - cron: "0 8 * * *"  # Ejecuta el workflow todos los días a las 08:00 UTC
 
 jobs:
-  run-script:
+  ejecutar-script:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar el repo
-        uses: actions/checkout@v3
+    - name: Checkout del repositorio
+      uses: actions/checkout@v3  # Clona el repositorio
 
-      - name: Configurar Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+    - name: Crear archivo mycreds.txt desde el secreto
+      run: |
+        echo "${{ secrets.GDRIVE_CLIENT_SECRETS }}" > mycreds.txt  # Crea el archivo con las credenciales
 
-      - name: Instalar dependencias
-        run: |
-          pip install -r requirements.txt
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # Instala las dependencias listadas en requirements.txt
 
-      - name: Ejecutar script
-        env:
-          GDRIVE_CLIENT_SECRETS: ${{ secrets.GDRIVE_CLIENT_SECRETS }}
-        run: |
-          echo "$GDRIVE_CLIENT_SECRETS" > client_secrets.json
-          python main.py
+    - name: Ejecutar script
+      run: python main.py  # Ejecuta el script Python
+
+    - name: Subir el archivo a Google Drive
+      run: |
+        python main.py  # Vuelve a ejecutar el script para subir el archivo a Google Drive
