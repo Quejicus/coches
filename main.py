@@ -226,7 +226,7 @@ CSV_RAW_URL = "https://raw.githubusercontent.com/Quejicus/coches/refs/heads/main
 # Función para descargar el archivo CSV desde GitHub
 def download_csv_from_github():
     try:
-        df = pd.read_csv(CSV_RAW_URL)
+        df = pd.read_csv(CSV_RAW_URL, encoding="utf-8", sep=",")
         print("✅ CSV descargado correctamente desde GitHub.")
         return df
     except Exception:
@@ -239,7 +239,7 @@ def download_csv_from_github():
 # Función para guardar el archivo CSV en GitHub
 def upload_csv_to_github(df, commit_message):
     # Convertir el DataFrame en CSV
-    csv_data = df.to_csv(index=True, index_label="id")
+    csv_data = df.to_csv(index=False)
     encoded_csv = base64.b64encode(csv_data.encode("utf-8")).decode("utf-8")
 
     # Crear la URL de la API de GitHub para cargar el archivo CSV
@@ -278,15 +278,7 @@ def update_csv():
     df_existing = download_csv_from_github()
     df_new = obtener_datos_alhambra_sharan()
 
-    # Restaurar 'id' como columna si estaba en el índice
-    if not df_existing.empty:
-        df_existing.reset_index(inplace=True)
-
-    # Concatenar los dos DataFrames
     df_concat = pd.concat([df_existing, df_new], ignore_index=True)
-
-    # Eliminar duplicados por 'id' y 'date'
-    df_concat = df_concat.drop_duplicates(subset=["id", "date"], keep="last")
 
     # Guardar el CSV concatenado en GitHub
     commit_message = f"Actualizar histórico de CSV con nuevos datos - {datetime.today().strftime('%Y-%m-%d')}"
