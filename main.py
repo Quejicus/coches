@@ -275,20 +275,17 @@ def get_file_sha():
 
 
 def update_csv():
-    # Descargar el CSV existente desde GitHub
     df_existing = download_csv_from_github()
-
-    # Obtener nuevo DataFrame con los datos actuales
     df_new = obtener_datos_alhambra_sharan()
 
-    # Establecer 'id' como índice si no lo está
+    # Restaurar 'id' como columna si estaba en el índice
     if not df_existing.empty:
-        df_existing.set_index("id", inplace=True)
+        df_existing.reset_index(inplace=True)
 
-    # Concatenar asegurando que se mantenga el índice como 'id'
-    df_concat = pd.concat([df_existing, df_new])
+    # Concatenar los dos DataFrames
+    df_concat = pd.concat([df_existing, df_new], ignore_index=True)
 
-    # Eliminar duplicados basados en 'id' y 'date', manteniendo el más reciente (última fecha)
+    # Eliminar duplicados por 'id' y 'date'
     df_concat = df_concat.drop_duplicates(subset=["id", "date"], keep="last")
 
     # Guardar el CSV concatenado en GitHub
