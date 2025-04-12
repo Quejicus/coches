@@ -5,6 +5,9 @@ on:
     - cron: '0 8 * * *'  # Ejecuta todos los días a las 08:00 UTC
   workflow_dispatch:     # Permite lanzarlo manualmente
 
+permissions:
+  contents: write
+  
 jobs:
   update-csv:
     runs-on: ubuntu-latest
