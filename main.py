@@ -277,7 +277,7 @@ def get_file_sha():
 def update_csv():
     df_existing = download_csv_from_github()
     df_new = obtener_datos_alhambra_sharan()
-
+    df_new.reset_index(inplace=True, names="id")
     df_concat = pd.concat([df_existing, df_new], ignore_index=True)
 
     # Guardar el CSV concatenado en GitHub
