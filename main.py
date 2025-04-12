@@ -219,7 +219,7 @@ GITHUB_REPO = "Quejicus/coches"  # Cambia esto a tu usuario/repositorio
 GITHUB_TOKEN = os.getenv(
     "GH_TOKEN"
 )  # Se usa un token de GitHub almacenado en los secrets
-CSV_PATH = "alhambra_sharan_hist.csv"  # Ruta del archivo CSV en el repositorio
+CSV_PATH = "data/alhambra_sharan_hist.csv"  # Ruta del archivo CSV en el repositorio
 
 
 # Función para descargar el archivo CSV desde GitHub
