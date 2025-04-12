@@ -226,7 +226,10 @@ CSV_PATH = "alhambra_sharan_hist.csv"  # Ruta del archivo CSV en el repositorio
 def download_csv_from_github():
     # URL de la API de GitHub para obtener el contenido del archivo CSV
     url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{CSV_PATH}"
-    headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3.raw",
+    }
 
     # Realizar la solicitud GET para obtener el archivo
     response = requests.get(url, headers=headers, timeout=60)
