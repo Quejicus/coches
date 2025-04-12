@@ -244,7 +244,10 @@ def upload_csv_to_github(df, commit_message):
 
     # Crear la URL de la API de GitHub para cargar el archivo CSV
     url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{CSV_PATH}"
-    headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json",
+    }
     sha = get_file_sha()
 
     data = {"message": commit_message, "content": encoded_csv, "branch": BRANCH}
