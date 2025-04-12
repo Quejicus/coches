@@ -3,7 +3,6 @@ import json
 import os
 import time
 from datetime import datetime
-from io import StringIO
 
 import pandas as pd
 import requests
@@ -215,35 +214,25 @@ def obtener_datos_alhambra_sharan():
 
 
 # Configuración de GitHub y otras variables
-GITHUB_REPO = "Quejicus/coches"  # Cambia esto a tu usuario/repositorio
-GITHUB_TOKEN = os.getenv(
-    "GH_TOKEN"
-)  # Se usa un token de GitHub almacenado en los secrets
-CSV_PATH = "data/alhambra_sharan_hist.csv"  # Ruta del archivo CSV en el repositorio
+BRANCH = "main"
+GITHUB_REPO = "Quejicus/coches"  # Repositorio de GitHub
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Token de acceso personal de GitHub
+CSV_PATH = (
+    "data/alhambra_sharan_hist.csv"  # Ruta donde se guardará el CSV en el repositorio
+)
+CSV_RAW_URL = "https://raw.githubusercontent.com/Quejicus/coches/refs/heads/main/data/alhambra_sharan_hist.csv"  # URL del CSV en el repositorio de GitHub
 
 
 # Función para descargar el archivo CSV desde GitHub
 def download_csv_from_github():
-    # URL de la API de GitHub para obtener el contenido del archivo CSV
-    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{CSV_PATH}"
-    headers = {
-        "Authorization": f"token {GITHUB_TOKEN}",
-        "Accept": "application/vnd.github.v3.raw",
-    }
-
-    # Realizar la solicitud GET para obtener el archivo
-    response = requests.get(url, headers=headers, timeout=60)
-
-    if response.status_code == 200:
-        # Decodificar el archivo CSV desde base64
-        content = response.json()["content"]
-        decoded_content = base64.b64decode(content).decode("utf-8")
-
-        # Convertir el CSV en un DataFrame
-        df_existing = pd.read_csv(StringIO(decoded_content))
-        return df_existing
-    else:
-        print("Error al descargar el archivo CSV desde GitHub")
+    try:
+        df = pd.read_csv(CSV_RAW_URL)
+        print("✅ CSV descargado correctamente desde GitHub.")
+        return df
+    except Exception:
+        print(
+            "⚠️ No se pudo descargar el CSV desde GitHub. Se usará un DataFrame vacío."
+        )
         return pd.DataFrame()
 
 
@@ -256,18 +245,30 @@ def upload_csv_to_github(df, commit_message):
     # Crear la URL de la API de GitHub para cargar el archivo CSV
     url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{CSV_PATH}"
     headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+    sha = get_file_sha()
 
-    # Datos del request para crear/actualizar el archivo
-    data = {"message": commit_message, "content": encoded_csv, "branch": "main"}
+    data = {"message": commit_message, "content": encoded_csv, "branch": BRANCH}
 
-    # Realizar la solicitud PUT para subir el archivo
+    if sha:
+        data["sha"] = sha  # Necesario para actualizar un archivo existente
+
     response = requests.put(url, json=data, headers=headers, timeout=60)
 
-    if response.status_code == 201:
-        print("✅ El archivo CSV actualizado se ha subido correctamente.")
+    if response.status_code in [200, 201]:
+        print("✅ CSV actualizado y subido a GitHub correctamente.")
     else:
         print(f"❌ Error al subir el archivo: {response.status_code}")
-        print(response.json())
+        print(response.text)
+
+
+def get_file_sha():
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{CSV_PATH}"
+    headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+    response = requests.get(url, headers=headers, timeout=30)
+    if response.status_code == 200:
+        return response.json()["sha"]
+    else:
+        return None
 
 
 def update_csv():
