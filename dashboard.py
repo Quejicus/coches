@@ -2,6 +2,19 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+# Manejo de actualización
+if "actualizado" not in st.session_state:
+    st.session_state.actualizado = False
+
+if st.button("🔄 Actualizar datos"):
+    st.session_state.actualizado = True
+    st.rerun()
+
+# Mostrar mensaje si se ha actualizado
+if st.session_state.actualizado:
+    st.success("✅ Datos actualizados correctamente")
+    st.session_state.actualizado = False  # reset tras mostrar
+
 # Cargar datos
 df = pd.read_csv("data/alhambra_sharan_hist.csv")
 
@@ -20,30 +33,7 @@ fig1 = px.box(df, x="title", y="price", title="Distribución de precios por mode
 st.plotly_chart(fig1)
 
 # ===============================
-# Gráfico 2: Histórico por selección de ID
-# ===============================
-st.header("🔹 Evolución del precio por vehículo (ID)")
-
-ids_disponibles = df["id"].dropna().unique().tolist()
-ids_seleccionados = st.multiselect(
-    "Selecciona uno o varios ID", ids_disponibles[:50], default=ids_disponibles[:3]
-)
-
-if ids_seleccionados:
-    df_filtrado = df[df["id"].isin(ids_seleccionados)].sort_values(by="date")
-    fig2 = px.line(
-        df_filtrado,
-        x="date",
-        y="price",
-        color="id",
-        title="Histórico de precios por ID",
-    )
-    st.plotly_chart(fig2)
-else:
-    st.warning("Selecciona al menos un ID para visualizar el histórico.")
-
-# ===============================
-# Gráfico 3: Histórico de precios por modelo
+# Gráfico 2: Histórico de precios por modelo
 # ===============================
 st.header("🔹 Comparar vehículos de un mismo modelo")
 
@@ -64,6 +54,29 @@ if not df_title.empty:
     st.plotly_chart(fig3)
 else:
     st.warning("No hay datos disponibles para este modelo.")
+
+# ===============================
+# Gráfico 3: Histórico por selección de ID
+# ===============================
+st.header("🔹 Evolución del precio por vehículo (ID)")
+
+ids_disponibles = df["id"].dropna().unique().tolist()
+ids_seleccionados = st.multiselect(
+    "Selecciona uno o varios ID", ids_disponibles[:50], default=ids_disponibles[:3]
+)
+
+if ids_seleccionados:
+    df_filtrado = df[df["id"].isin(ids_seleccionados)].sort_values(by="date")
+    fig2 = px.line(
+        df_filtrado,
+        x="date",
+        y="price",
+        color="id",
+        title="Histórico de precios por ID",
+    )
+    st.plotly_chart(fig2)
+else:
+    st.warning("Selecciona al menos un ID para visualizar el histórico.")
 
 # ===============================
 # Vista previa
