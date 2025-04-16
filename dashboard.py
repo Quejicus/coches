@@ -1,12 +1,30 @@
+from datetime import datetime
+
 import pandas as pd
 import plotly.express as px
 import streamlit as st
 import yagmail
 
 
+@st.cache_data
+def obtener_fecha_ultimo_envio():
+    return None  # Por defecto no hay nada almacenado
+
+
+@st.cache_data
+def registrar_envio(fecha_actual: str):
+    return fecha_actual
+
+
 def enviar_alerta_email(alertas_precio, destinatario=None):
-    if not alertas_precio:
+    if not alertas:
         return
+
+    hoy = datetime.today().strftime("%Y-%m-%d")
+    ultima_fecha = obtener_fecha_ultimo_envio()
+
+    if ultima_fecha == hoy:
+        return  # Ya se envió hoy
 
     user = st.secrets["email"]["user"]
     password = st.secrets["email"]["password"]
@@ -23,6 +41,8 @@ def enviar_alerta_email(alertas_precio, destinatario=None):
         )
 
     yag.send(to=destinatario, subject="🚨 Bajada de precio detectada", contents=cuerpo)
+    # Guardar la fecha actual como último envío
+    registrar_envio(hoy)
 
 
 # Manejo de actualización
