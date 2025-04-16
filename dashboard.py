@@ -100,7 +100,7 @@ if alertas:
             f"🚨 El vehículo ID `{a['id']}` ({a['title']}) ha bajado un **{abs(a['variacion'])}%**: "
             f"de {a['precio_inicial']:.0f} € a {a['precio_final']:.0f} €"
         )
-    enviar_alerta_email(alertas)
+    # enviar_alerta_email(alertas)
 else:
     st.success("✅ No hay bajadas de precio significativas (≥10%) en este momento.")
 
