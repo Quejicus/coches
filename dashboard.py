@@ -65,6 +65,12 @@ df = pd.read_csv("data/alhambra_sharan_hist.csv")
 if "date" in df.columns:
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
 
+# Ensure the 'url' column is displayed as clickable links
+if "url" in df.columns:
+    df["url"] = df["url"].apply(
+        lambda x: f'<a href="{x}" target="_blank">{x}</a>' if pd.notna(x) else x
+    )
+
 st.header("🔔 Alertas de bajadas de precio")
 
 # Filtrar para tener solo registros válidos por ID con fecha
@@ -185,5 +191,13 @@ else:
 # ===============================
 # Vista previa
 # ===============================
-st.header("🔹 Vista previa del dataset")
-st.dataframe(df.head())
+# Filter the dataset to show only the most recent date
+if "date" in df.columns:
+    most_recent_date = df["date"].max()
+    df_filtered = df[df["date"] == most_recent_date]
+else:
+    df_filtered = df  # Fallback if 'date' column is missing
+
+# Display the filtered dataset
+st.header("🔹 Vista previa del dataset (Fecha más reciente)")
+st.markdown(df_filtered.to_html(escape=False), unsafe_allow_html=True)
