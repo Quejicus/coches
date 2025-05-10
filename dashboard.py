@@ -99,6 +99,17 @@ for veh_id, group in df_valid.groupby("id"):
             }
             alertas.append(alerta)
 
+# Mostrar alertas
+if alertas:
+    for a in alertas:
+        st.warning(
+            f"🚨 El vehículo ID `{a['id']}` ({a['title']}) ha bajado un **{abs(a['variacion'])}%**: "
+            f"de {a['precio_inicial']:.0f} € a {a['precio_final']:.0f} €"
+        )
+    # enviar_alerta_email(alertas)
+else:
+    st.success("✅ No hay bajadas de precio significativas (≥10%) en este momento.")
+
 # ===============================
 # Nuevos vehículos añadidos esta semana
 # ===============================
@@ -120,17 +131,6 @@ if len(new_car_ids) > 0:
     st.dataframe(new_cars)
 else:
     st.success("✅ No se han añadido nuevos vehículos al dataset esta semana.")
-
-# Mostrar alertas
-if alertas:
-    for a in alertas:
-        st.warning(
-            f"🚨 El vehículo ID `{a['id']}` ({a['title']}) ha bajado un **{abs(a['variacion'])}%**: "
-            f"de {a['precio_inicial']:.0f} € a {a['precio_final']:.0f} €"
-        )
-    # enviar_alerta_email(alertas)
-else:
-    st.success("✅ No hay bajadas de precio significativas (≥10%) en este momento.")
 
 st.title("📊 Dashboard - Análisis histórico de precios")
 
