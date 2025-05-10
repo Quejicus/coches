@@ -205,6 +205,7 @@ def obtener_datos_alhambra_sharan():
                 "km": elem["km"],
                 "price": elem["price"]["amount"],
                 "date": fecha,
+                "url": elem["url"],
             }
         }
         data_cleaned.update(new_elem)
@@ -278,6 +279,12 @@ def update_csv():
     df_existing = download_csv_from_github()
     df_new = obtener_datos_alhambra_sharan()
     df_new.reset_index(inplace=True, names="id")
+
+    # Ensure the 'url' column exists in both DataFrames
+    if "url" not in df_existing.columns:
+        df_existing["url"] = None
+
+    # Concatenate the new data with the existing data
     df_concat = pd.concat([df_existing, df_new], ignore_index=True)
     df_concat.drop_duplicates(subset=["id", "date"], inplace=True)
 
