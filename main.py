@@ -205,7 +205,7 @@ def obtener_datos_alhambra_sharan():
                 "km": elem["km"],
                 "price": elem["price"]["amount"],
                 "date": fecha,
-                "url": elem["url"],
+                "url": "https://www.coches.net" + str(elem["url"]),
             }
         }
         data_cleaned.update(new_elem)
