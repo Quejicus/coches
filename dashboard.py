@@ -99,10 +99,15 @@ for veh_id, group in df_valid.groupby("id"):
 last_week = datetime.today() - timedelta(days=7)
 
 new_car_ids = []  # Initialize with an empty list in case 'date' column is missing
+# Filter new cars added since last week and keep only the most recent row for each car
 if "date" in df.columns:
     new_cars = df[df["date"] >= last_week]
+    new_cars = new_cars.sort_values(by="date", ascending=False).drop_duplicates(
+        subset="id", keep="first"
+    )
     new_car_ids = new_cars["id"].unique()
 
+# Display new cars added since last week
 st.header("🆕 Nuevos vehículos añadidos esta semana")
 if len(new_car_ids) > 0:
     st.write(f"Se han añadido {len(new_car_ids)} nuevos vehículos al dataset:")
