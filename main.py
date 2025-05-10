@@ -279,6 +279,7 @@ def update_csv():
     df_new = obtener_datos_alhambra_sharan()
     df_new.reset_index(inplace=True, names="id")
     df_concat = pd.concat([df_existing, df_new], ignore_index=True)
+    df_concat.drop_duplicates(subset=["id", "date"], inplace=True)
 
     # Guardar el CSV concatenado en GitHub
     commit_message = f"Actualizar histórico de CSV con nuevos datos - {datetime.today().strftime('%Y-%m-%d')}"
