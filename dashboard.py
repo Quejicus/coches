@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 import plotly.express as px
@@ -92,6 +92,23 @@ for veh_id, group in df_valid.groupby("id"):
                 "variacion": round(variacion * 100, 2),
             }
             alertas.append(alerta)
+
+# ===============================
+# Nuevos vehículos añadidos esta semana
+# ===============================
+last_week = datetime.today() - timedelta(days=7)
+
+new_car_ids = []  # Initialize with an empty list in case 'date' column is missing
+if "date" in df.columns:
+    new_cars = df[df["date"] >= last_week]
+    new_car_ids = new_cars["id"].unique()
+
+st.header("🆕 Nuevos vehículos añadidos esta semana")
+if len(new_car_ids) > 0:
+    st.write(f"Se han añadido {len(new_car_ids)} nuevos vehículos al dataset:")
+    st.dataframe(new_cars)
+else:
+    st.success("✅ No se han añadido nuevos vehículos al dataset esta semana.")
 
 # Mostrar alertas
 if alertas:
